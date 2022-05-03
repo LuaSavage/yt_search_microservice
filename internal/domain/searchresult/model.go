@@ -1,7 +1,7 @@
 package searchresult
 
 import (
-	video "github.com/LuaSavage/yt_search_microservice/internal/video"
+	video "github.com/LuaSavage/yt_search_microservice/internal/domain/video"
 )
 
 type SearchResult struct {

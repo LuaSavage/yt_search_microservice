@@ -4,8 +4,8 @@ import (
 	"context"
 	"log"
 
-	YtSearch "github.com/AnjanaMadu/YTSearch"
-	video "github.com/LuaSavage/yt_search_microservice/internal/video"
+	video "github.com/LuaSavage/yt_search_microservice/internal/domain/video"
+	ytsearch "github.com/LuaSavage/yt_search_microservice/pkg/client/ytsearch"
 )
 
 type Service interface {
@@ -14,11 +14,14 @@ type Service interface {
 }
 
 type service struct {
-	storage Storage
+	searchApi ytsearch.Service
+	storage   Storage
 }
 
-func NewService(storage Storage) Service {
-	return &service{storage}
+func NewService(storage Storage, searchApi ytsearch.Service) Service {
+	return &service{
+		searchApi: searchApi,
+		storage:   storage}
 }
 
 func (s *service) GetSearchResultByQuary(ctx context.Context, query string) (*SearchResult, error) {
@@ -38,7 +41,7 @@ func (s *service) Search(ctx context.Context, query string) (*SearchResult, erro
 		return results, nil
 	}
 
-	result, err := YtSearch.Search(query)
+	result, err := s.searchApi.Search(query)
 
 	if err != nil {
 		log.Fatal(err)
@@ -48,14 +51,7 @@ func (s *service) Search(ctx context.Context, query string) (*SearchResult, erro
 	var videoPool []video.Video
 
 	for _, res := range result {
-
-		video := video.Video{
-			Id:          res.VideoId,
-			Thumbnail:   res.Thumbnail,
-			PublishTime: res.PublishTime,
-			Channel:     res.Channel, Views: res.Views}
-
-		videoPool = append(videoPool, video)
+		videoPool = append(videoPool, video.Video(res))
 	}
 
 	currentSearchResults := &SearchResult{Query: query, Videos: videoPool}

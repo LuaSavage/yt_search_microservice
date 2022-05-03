@@ -1,9 +1,10 @@
 package video
 
 type Video struct {
-	Id          string `json:"id"`
-	Thumbnail   string `json:"thumbnail"`
+	Title       string `json:"title"`
+	Id          string `json:"videoId"`
 	PublishTime string `json:"publishTime"`
 	Channel     string `json:"channel"`
 	Views       string `json:"views"`
+	Thumbnail   string `json:"thumbnail"`
 }
