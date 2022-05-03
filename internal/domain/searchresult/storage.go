@@ -2,7 +2,6 @@ package searchresult
 
 import (
 	"context"
-	"errors"
 	"fmt"
 )
 
@@ -18,18 +17,19 @@ func NewStorage() Storage {
 }
 
 func (s *storage) GetSearchResultByQuary(ctx context.Context, query string) (*SearchResult, error) {
-	return nil, errors.New(fmt.Sprintf("Error! Search results by query '%s' alrady exists", query))
+	return nil, fmt.Errorf("search results by query '%s' alrady exists", query)
 }
 
 // put it in a cache
 func (s *storage) CreateSearchResult(ctx context.Context, searchResult *SearchResult) error {
-	// someshit here
 
 	_, err := s.GetSearchResultByQuary(ctx, searchResult.Query)
 
-	if err == nil {
-		return errors.New(fmt.Sprintf("Error! Search results by query '%s' alrady exists", searchResult.Query))
+	if err != nil {
+		return err
 	}
 
-	return errors.New(fmt.Sprintf("Error! Search results by query '%s' alrady exists", searchResult.Query))
+	// some redis shit here
+
+	return nil
 }
