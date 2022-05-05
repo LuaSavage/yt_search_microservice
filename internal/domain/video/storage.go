@@ -23,14 +23,14 @@ func NewStorage(client cache.Client) Storage {
 }
 
 func (s *storage) GetVideoByID(ctx context.Context, id string) (*Video, error) {
-	var video Video
+	var video *Video = &Video{}
 
 	// get video hash by type:id from redis
-	if err := s.client.HGetAll(ctx, "video:"+id).Scan(&video); err != nil {
+	if err := s.client.HGetAll(ctx, "video:"+id).Scan(video); err != nil {
 		return nil, err
 	}
 
-	return &video, nil
+	return video, nil
 }
 
 func (s *storage) CreateVideo(ctx context.Context, video Video) error {
