@@ -23,18 +23,25 @@ func NewStorage(client cache.Client) Storage {
 }
 
 func (s *storage) GetSearchResultByQuary(ctx context.Context, query string) (*StoreSearchResultDTO, error) {
-	var searchResultDTO StoreSearchResultDTO
+	var searchResultDTO *StoreSearchResultDTO = &StoreSearchResultDTO{}
 
 	// get search result hash by type:id from redis
-	if err := s.client.HGetAll(ctx, "search_result:"+query).Scan(&searchResultDTO); err != nil {
-		return nil, err
+	stringMap := s.client.HGetAll(ctx, "search_result:"+query)
+
+	if stringMap.Err() != nil {
+		return nil, stringMap.Err()
 	}
+
+	searchResultDTO.Query = stringMap.Val()["query"]
+	var ids []string = []string{}
+	json.Unmarshal([]byte(stringMap.Val()["videos"]), &ids)
+	searchResultDTO.Videos = ids
 
 	if searchResultDTO.Query != query {
 		return nil, fmt.Errorf("search results by query '%s' does'nt exists", query)
 	}
 
-	return &searchResultDTO, nil
+	return searchResultDTO, nil
 }
 
 // put it in a cache
