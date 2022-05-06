@@ -19,26 +19,14 @@ func NewService(storage Storage) Service {
 }
 
 func (s *service) CreateVideo(ctx context.Context, video Video) error {
-	_, err := s.GetVideoByID(ctx, video.Id)
-
-	if err != nil {
-		return err
-	}
-
-	err = s.storage.CreateVideo(ctx, video)
-
-	if err != nil {
-		return err
-	}
-
-	return nil
+	return s.storage.CreateVideo(ctx, video)
 }
 
 func (s *service) GetVideoByID(ctx context.Context, id string) (*Video, error) {
 	video, err := s.storage.GetVideoByID(ctx, id)
 
 	if err != nil {
-		return nil, fmt.Errorf("video by id '%s' alrady exists", id)
+		return nil, fmt.Errorf("video by id '%s' does'nt exists", id)
 	}
 
 	return video, nil
