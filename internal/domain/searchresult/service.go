@@ -2,6 +2,7 @@ package searchresult
 
 import (
 	"context"
+	"fmt"
 	"log"
 
 	video "github.com/LuaSavage/yt_search_microservice/internal/domain/video"
@@ -45,6 +46,7 @@ func (s *service) GetSearchResultByQuary(ctx context.Context, query string) (*Se
 			results.Videos = append(results.Videos, *retrivenVideo)
 		} else {
 			//do someshit to get new video data
+			fmt.Println()
 		}
 	}
 
