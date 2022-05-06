@@ -14,8 +14,9 @@ type Service interface {
 }
 
 type service struct {
-	searchApi ytsearch.Service
-	storage   Storage
+	searchApi    ytsearch.Service
+	storage      Storage
+	videoService video.Service
 }
 
 func NewService(storage Storage, searchApi ytsearch.Service) Service {
@@ -25,16 +26,34 @@ func NewService(storage Storage, searchApi ytsearch.Service) Service {
 }
 
 func (s *service) GetSearchResultByQuary(ctx context.Context, query string) (*SearchResult, error) {
-	results, err := s.storage.GetSearchResultByQuary(ctx, query)
+	resultsDTO, err := s.storage.GetSearchResultByQuary(ctx, query)
 
 	if err != nil {
 		return nil, err
 	}
 
-	return results, nil
+	// now we gonna pull up all of the videos by id
+	results := SearchResult{
+		Query:  query,
+		Videos: []video.Video{},
+	}
+
+	for _, videoId := range resultsDTO.Videos {
+		retrivenVideo, err := s.videoService.GetVideoByID(ctx, videoId)
+
+		if err == nil {
+			results.Videos = append(results.Videos, *retrivenVideo)
+		} else {
+			//do someshit to get new video data
+		}
+	}
+
+	return &results, nil
 }
 
 func (s *service) Search(ctx context.Context, query string) (*SearchResult, error) {
+
+	// If is here ready result then returning them
 	results, err := s.GetSearchResultByQuary(ctx, query)
 
 	if err == nil {
@@ -54,7 +73,9 @@ func (s *service) Search(ctx context.Context, query string) (*SearchResult, erro
 		videoPool = append(videoPool, video.Video(res))
 	}
 
-	currentSearchResults := &SearchResult{Query: query, Videos: videoPool}
+	currentSearchResults := &SearchResult{
+		Query:  query,
+		Videos: videoPool}
 
 	return currentSearchResults, nil
 }
