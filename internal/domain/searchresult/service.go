@@ -20,10 +20,11 @@ type service struct {
 	videoService video.Service
 }
 
-func NewService(storage Storage, searchApi ytsearch.Service) Service {
+func NewService(storage Storage, searchApi ytsearch.Service, videoService video.Service) Service {
 	return &service{
-		searchApi: searchApi,
-		storage:   storage}
+		searchApi:    searchApi,
+		storage:      storage,
+		videoService: videoService}
 }
 
 func (s *service) GetSearchResultByQuary(ctx context.Context, query string) (*SearchResult, error) {
@@ -33,7 +34,7 @@ func (s *service) GetSearchResultByQuary(ctx context.Context, query string) (*Se
 		return nil, err
 	}
 
-	// now we gonna pull up all of the videos by id
+	// now we gonna pull up from storage all of the videos by id
 	results := SearchResult{
 		Query:  query,
 		Videos: []video.Video{},
@@ -45,7 +46,8 @@ func (s *service) GetSearchResultByQuary(ctx context.Context, query string) (*Se
 		if err == nil {
 			results.Videos = append(results.Videos, *retrivenVideo)
 		} else {
-			//do someshit to get new video data
+			//case of unexisting video in cache
+			//we better request it by iteslf
 			fmt.Println()
 		}
 	}
