@@ -1,8 +1,8 @@
 package searchresult
 
 type StoreSearchResultDTO struct {
-	Query  string   `json:"query"`
-	Videos []string `json:"videos"`
+	Query  string   `json:"query" yaml:"query"`
+	Videos []string `json:"videos" yaml:"videos"`
 }
 
 func NewStoreSearchResultDTO(searchResult SearchResult) StoreSearchResultDTO {
