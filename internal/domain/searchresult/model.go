@@ -5,6 +5,6 @@ import (
 )
 
 type SearchResult struct {
-	Query  string        `json:"query" redis:"query"`
-	Videos []video.Video `json:"videos" redis:"videos"`
+	Query  string        `json:"query" redis:"query" yaml:"query"`
+	Videos []video.Video `json:"videos" redis:"videos" yaml:"videos"`
 }
