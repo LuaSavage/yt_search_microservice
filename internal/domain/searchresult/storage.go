@@ -6,7 +6,6 @@ import (
 	"fmt"
 
 	cache "github.com/LuaSavage/yt_search_microservice/pkg/client/cache"
-	redis "github.com/go-redis/redis/v8"
 )
 
 type Storage interface {
@@ -52,7 +51,7 @@ func (s *storage) CreateSearchResult(ctx context.Context, searchResult *SearchRe
 	}
 
 	// trying to write it into redis
-	_, err := s.client.Pipelined(ctx, func(rdb redis.Pipeliner) error {
+	_, err := s.client.Pipelined(ctx, func(rdb cache.Pipeliner) error {
 
 		// dto contains slice of video.id in place  of video models
 		searchResultDTO := NewStoreSearchResultDTO(*searchResult)

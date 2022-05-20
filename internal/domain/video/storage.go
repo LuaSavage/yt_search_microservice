@@ -6,7 +6,6 @@ import (
 	"fmt"
 
 	cache "github.com/LuaSavage/yt_search_microservice/pkg/client/cache"
-	redis "github.com/go-redis/redis/v8"
 )
 
 type Storage interface {
@@ -49,7 +48,7 @@ func (s *storage) CreateVideo(ctx context.Context, video Video) error {
 	json.Unmarshal(data, &videoMaped)
 
 	// trying to write it into redis
-	if _, err := s.client.Pipelined(ctx, func(rdb redis.Pipeliner) error {
+	if _, err := s.client.Pipelined(ctx, func(rdb cache.Pipeliner) error {
 
 		for key, value := range videoMaped {
 			cmd := rdb.HSet(ctx, "video:"+video.Id, key, value)
