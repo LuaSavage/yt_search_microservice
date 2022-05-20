@@ -13,6 +13,7 @@ import (
 	apiMocks "github.com/LuaSavage/yt_search_microservice/pkg/mocks/ytsearchmocks"
 	"github.com/stretchr/testify/assert"
 	"github.com/stretchr/testify/mock"
+	"github.com/stretchr/testify/require"
 	"gopkg.in/yaml.v3"
 )
 
@@ -50,10 +51,10 @@ func TestGetSearchResultByQuaryOK(t *testing.T) {
 		videos := []video.Video{}
 
 		buf, err := ioutil.ReadFile("../../searchresult/searchresult_test_data/data.yaml")
-		assert.Nil(t, err)
+		require.NoError(t, err)
 
 		err = yaml.Unmarshal([]byte(buf), &videos)
-		assert.Nil(t, err)
+		require.NoError(t, err)
 
 		// predefined search result dto
 		videoIDs := []string{}
@@ -84,7 +85,7 @@ func TestGetSearchResultByQuaryOK(t *testing.T) {
 		}
 
 		retrivedSearchResult, err := service.GetSearchResultByQuary(ctx, testSearchResult.Query)
-		assert.Nil(t, err, "GetSearchResultByQuary ought to unmistakably works")
+		assert.NoError(t, err, "GetSearchResultByQuary ought to unmistakably works")
 		assert.Equal(t, len(testSearchResult.Videos), len(retrivedSearchResult.Videos))
 		assert.ElementsMatch(t, testSearchResult.Videos, retrivedSearchResult.Videos)
 	})
