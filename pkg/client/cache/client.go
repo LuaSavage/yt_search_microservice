@@ -13,6 +13,8 @@ type Client interface {
 	HMGet(ctx context.Context, key string, fields ...string) *redis.SliceCmd
 }
 
+type Pipeliner = redis.Pipeliner
+
 func NewClient(host string, password string, db int) (Client, error) {
 
 	newClient := redis.NewClient(&redis.Options{
