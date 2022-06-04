@@ -22,16 +22,16 @@ func NewStorage(client cache.Client) Storage {
 }
 
 func (s *storage) Get(ctx context.Context, videoId string) (*VideoStreamPool, error) {
-	var streamPool *VideoStreamPool = &VideoStreamPool{
-		VideoId: videoId,
-		Streams: []VideoStream{},
-	}
-
 	// get search result hash by type:id from redis
 	stringMap := s.client.HGetAll(ctx, "video_stream_pool:"+videoId)
 
 	if stringMap.Err() != nil {
 		return nil, stringMap.Err()
+	}
+
+	var streamPool VideoStreamPool = VideoStreamPool{
+		VideoId: videoId,
+		Streams: []VideoStream{},
 	}
 
 	if streamPool.VideoId != stringMap.Val()["videoId"] {
@@ -41,7 +41,7 @@ func (s *storage) Get(ctx context.Context, videoId string) (*VideoStreamPool, er
 	// extracting video streams
 	json.Unmarshal([]byte(stringMap.Val()["streams"]), &streamPool.Streams)
 
-	return streamPool, nil
+	return &streamPool, nil
 }
 
 // put it in a cache
