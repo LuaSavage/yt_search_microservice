@@ -2,11 +2,11 @@ package searchresult
 
 import (
 	"context"
-	"fmt"
 	"log"
 
 	video "github.com/LuaSavage/yt_search_microservice/internal/domain/video"
 	ytsearch "github.com/LuaSavage/yt_search_microservice/pkg/client/ytsearch"
+	ytvideo "github.com/LuaSavage/yt_search_microservice/pkg/client/ytvideo"
 )
 
 type Service interface {
@@ -15,16 +15,18 @@ type Service interface {
 }
 
 type service struct {
-	searchApi    ytsearch.Service
-	storage      Storage
-	videoService video.Service
+	searchApi     ytsearch.Service
+	storage       Storage
+	videoService  video.Service
+	ytVideoClient ytvideo.Client
 }
 
-func NewService(storage Storage, searchApi ytsearch.Service, videoService video.Service) Service {
+func NewService(storage Storage, searchApi ytsearch.Service, videoService video.Service, ytVideoClient ytvideo.Client) Service {
 	return &service{
-		searchApi:    searchApi,
-		storage:      storage,
-		videoService: videoService}
+		searchApi:     searchApi,
+		storage:       storage,
+		videoService:  videoService,
+		ytVideoClient: ytVideoClient}
 }
 
 func (s *service) GetSearchResultByQuary(ctx context.Context, query string) (*SearchResult, error) {
@@ -48,7 +50,22 @@ func (s *service) GetSearchResultByQuary(ctx context.Context, query string) (*Se
 		} else {
 			//case of unexisting video in cache
 			//we better request it by iteslf
-			fmt.Println()
+			ytVideo, err := s.ytVideoClient.GetVideoContext(ctx, videoId)
+
+			if err == nil {
+				obtainedVideo := video.Video{
+					Title:       ytVideo.Title,
+					Id:          videoId,
+					PublishTime: ytVideo.PublishDate.Format("2006-01-02"),
+					Channel:     ytVideo.Author,
+					Views:       "-/-",
+					Thumbnail:   ytVideo.Thumbnails[0].URL,
+				}
+
+				results.Videos = append(results.Videos, obtainedVideo)
+
+				// at the same same time it reasonable to extract streams urls, but not now
+			}
 		}
 	}
 
