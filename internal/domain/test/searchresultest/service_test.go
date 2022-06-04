@@ -11,6 +11,7 @@ import (
 	searchMocks "github.com/LuaSavage/yt_search_microservice/internal/mocks/searchmocks"
 	videoMocks "github.com/LuaSavage/yt_search_microservice/internal/mocks/videomocks"
 	apiMocks "github.com/LuaSavage/yt_search_microservice/pkg/mocks/ytsearchmocks"
+	ytVideoMocks "github.com/LuaSavage/yt_search_microservice/pkg/mocks/ytvideo"
 	"github.com/stretchr/testify/assert"
 	"github.com/stretchr/testify/mock"
 	"github.com/stretchr/testify/require"
@@ -21,8 +22,9 @@ func setup(t testing.TB) (*searchMocks.Storage, *videoMocks.Service, *apiMocks.S
 	storage := searchMocks.NewStorage(t)
 	videoService := videoMocks.NewService(t)
 	api := apiMocks.NewService(t)
+	videoStreamApi := ytVideoMocks.NewClient(t)
 
-	return storage, videoService, api, searchresult.NewService(storage, api, videoService)
+	return storage, videoService, api, searchresult.NewService(storage, api, videoService, videoStreamApi)
 }
 
 // case of unexisting search results in cache
