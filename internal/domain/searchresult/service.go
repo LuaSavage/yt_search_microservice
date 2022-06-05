@@ -21,12 +21,12 @@ type service struct {
 	ytVideoClient ytvideo.Client
 }
 
-func NewService(storage Storage, searchApi ytsearch.Service, videoService video.Service, ytVideoClient ytvideo.Client) Service {
+func NewService(dto NewServiceDTO) Service {
 	return &service{
-		searchApi:     searchApi,
-		storage:       storage,
-		videoService:  videoService,
-		ytVideoClient: ytVideoClient}
+		searchApi:     dto.SearchApi,
+		storage:       dto.Storage,
+		videoService:  dto.VideoService,
+		ytVideoClient: dto.YtVideoClient}
 }
 
 func (s *service) GetSearchResultByQuary(ctx context.Context, query string) (*SearchResult, error) {

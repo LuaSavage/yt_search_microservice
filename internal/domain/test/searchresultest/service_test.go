@@ -24,7 +24,14 @@ func setup(t testing.TB) (*searchMocks.Storage, *videoMocks.Service, *apiMocks.S
 	api := apiMocks.NewService(t)
 	videoStreamApi := ytVideoMocks.NewClient(t)
 
-	return storage, videoService, api, searchresult.NewService(storage, api, videoService, videoStreamApi)
+	dto := searchresult.NewServiceDTO{
+		SearchApi:     api,
+		Storage:       storage,
+		VideoService:  videoService,
+		YtVideoClient: videoStreamApi,
+	}
+
+	return storage, videoService, api, searchresult.NewService(dto)
 }
 
 // case of unexisting search results in cache

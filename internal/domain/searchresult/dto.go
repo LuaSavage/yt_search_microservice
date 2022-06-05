@@ -1,5 +1,18 @@
 package searchresult
 
+import (
+	video "github.com/LuaSavage/yt_search_microservice/internal/domain/video"
+	ytsearch "github.com/LuaSavage/yt_search_microservice/pkg/client/ytsearch"
+	ytvideo "github.com/LuaSavage/yt_search_microservice/pkg/client/ytvideo"
+)
+
+type NewServiceDTO struct {
+	SearchApi     ytsearch.Service
+	Storage       Storage
+	VideoService  video.Service
+	YtVideoClient ytvideo.Client
+}
+
 type StoreSearchResultDTO struct {
 	Query  string   `json:"query" yaml:"query"`
 	Videos []string `json:"videos" yaml:"videos"`

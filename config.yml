@@ -1,0 +1,12 @@
+---
+
+object_ttl:
+  video: 10
+  search_result: 10
+  video_stream_pool: 10
+redis:
+  host: localhost
+  port: 8080
+  username: "user"
+  password: "pass"
+  database: 1
