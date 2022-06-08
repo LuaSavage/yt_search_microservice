@@ -8,6 +8,7 @@ import (
 	youtube "github.com/kkdai/youtube/v2"
 )
 
+//mockery --name=Client --filename=client.go --output=../../mocks/ytvideo/ --outpkg=ytvideomocks
 type Client interface {
 	GetStream(video *youtube.Video, format *youtube.Format) (io.ReadCloser, int64, error)
 	GetStreamContext(ctx context.Context, video *youtube.Video, format *youtube.Format) (io.ReadCloser, int64, error)
