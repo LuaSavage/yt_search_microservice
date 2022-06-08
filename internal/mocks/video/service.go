@@ -17,11 +17,11 @@ type Service struct {
 }
 
 // CreateVideo provides a mock function with given fields: ctx, _a1
-func (_m *Service) CreateVideo(ctx context.Context, _a1 video.Video) error {
+func (_m *Service) CreateVideo(ctx context.Context, _a1 *video.Video) error {
 	ret := _m.Called(ctx, _a1)
 
 	var r0 error
-	if rf, ok := ret.Get(0).(func(context.Context, video.Video) error); ok {
+	if rf, ok := ret.Get(0).(func(context.Context, *video.Video) error); ok {
 		r0 = rf(ctx, _a1)
 	} else {
 		r0 = ret.Error(0)
