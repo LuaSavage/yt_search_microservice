@@ -18,6 +18,7 @@ require (
 	github.com/go-redis/redismock/v8 v8.0.6 // indirect
 	github.com/gomodule/redigo v1.8.8 // indirect
 	github.com/ilyakaznacheev/cleanenv v1.2.6
+	github.com/julienschmidt/httprouter v1.3.0
 	github.com/kkdai/youtube/v2 v2.7.15 // indirect
 	github.com/lithdew/youtube v0.0.0-20200524132213-a1fd5d688f8a // indirect
 	github.com/stretchr/objx v0.3.0 // indirect
