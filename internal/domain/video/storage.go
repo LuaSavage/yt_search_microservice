@@ -11,7 +11,7 @@ import (
 type Storage interface {
 	GetVideoByID(ctx context.Context, id string) (*Video, error)
 	//SetVideo(ctx context.Context, video Video) error
-	CreateVideo(ctx context.Context, video Video) error
+	CreateVideo(ctx context.Context, video *Video) error
 }
 
 type storage struct {
@@ -37,7 +37,7 @@ func (s *storage) GetVideoByID(ctx context.Context, id string) (*Video, error) {
 	return video, nil
 }
 
-func (s *storage) CreateVideo(ctx context.Context, video Video) error {
+func (s *storage) CreateVideo(ctx context.Context, video *Video) error {
 
 	if _, err := s.GetVideoByID(ctx, video.Id); err == nil {
 		return fmt.Errorf("video with id '%s' already exists in cache", video.Id)

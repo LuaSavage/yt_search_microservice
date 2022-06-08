@@ -5,9 +5,10 @@ import (
 	"fmt"
 )
 
+//mockery --name=Service --filename=service.go --output=../../mocks/video/ --outpkg=videomocks
 type Service interface {
 	GetVideoByID(ctx context.Context, id string) (*Video, error)
-	CreateVideo(ctx context.Context, video Video) error
+	CreateVideo(ctx context.Context, video *Video) error
 }
 
 type service struct {
@@ -18,7 +19,7 @@ func NewService(storage Storage) Service {
 	return &service{storage}
 }
 
-func (s *service) CreateVideo(ctx context.Context, video Video) error {
+func (s *service) CreateVideo(ctx context.Context, video *Video) error {
 	return s.storage.CreateVideo(ctx, video)
 }
 

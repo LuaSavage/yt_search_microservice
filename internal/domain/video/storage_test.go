@@ -28,7 +28,7 @@ func newTestRedis() (*redis.Client, *redismock.ClientMock) {
 
 // initialise test object
 var (
-	testVideo Video = Video{
+	testVideo *Video = &Video{
 		Title:       "Test video",
 		Id:          "=TestvdIeo",
 		PublishTime: "22-09-2011",
