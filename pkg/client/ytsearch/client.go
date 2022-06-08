@@ -4,17 +4,18 @@ import (
 	YTSearch "github.com/AnjanaMadu/YTSearch"
 )
 
-type Service interface {
-	Search(query string) (result []ResultDTO, err error)
+//mockery --name=Client --filename=client.go --output=../../mocks/ytsearch/ --outpkg=ytsearchmocks
+type Client interface {
+	Search(query string) (result []*ResultDTO, err error)
 }
 
-type service struct{}
+type client struct{}
 
-func NewService() Service {
-	return &service{}
+func NewService() Client {
+	return &client{}
 }
 
-func (s *service) Search(query string) (result []ResultDTO, err error) {
+func (c *client) Search(query string) (result []*ResultDTO, err error) {
 	results, err := YTSearch.Search(query)
 
 	if err != nil {
@@ -22,7 +23,7 @@ func (s *service) Search(query string) (result []ResultDTO, err error) {
 	}
 
 	for _, res := range results {
-		result = append(result, ResultDTO{
+		result = append(result, &ResultDTO{
 			Title:       res.Title,
 			Id:          res.VideoId,
 			PublishTime: res.PublishTime,
