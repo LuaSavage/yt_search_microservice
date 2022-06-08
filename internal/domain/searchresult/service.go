@@ -15,13 +15,13 @@ type Service interface {
 }
 
 type service struct {
-	searchApi     ytsearch.Service
+	searchApi     ytsearch.Client
 	storage       Storage
 	videoService  video.Service
 	ytVideoClient ytvideo.Client
 }
 
-func NewService(dto NewServiceDTO) Service {
+func NewService(dto *NewServiceDTO) Service {
 	return &service{
 		searchApi:     dto.SearchApi,
 		storage:       dto.Storage,
@@ -91,7 +91,7 @@ func (s *service) Search(ctx context.Context, query string) (*SearchResult, erro
 	var videoPool []video.Video
 
 	for _, res := range result {
-		videoPool = append(videoPool, video.Video(res))
+		videoPool = append(videoPool, video.Video(*res))
 	}
 
 	currentSearchResults := &SearchResult{

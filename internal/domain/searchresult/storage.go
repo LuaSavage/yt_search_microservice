@@ -8,6 +8,7 @@ import (
 	cache "github.com/LuaSavage/yt_search_microservice/pkg/client/cache"
 )
 
+//mockery --name=Storage --filename=storage.go --output=../../mocks/searchresult/ --outpkg=searchmocks
 type Storage interface {
 	GetSearchResultByQuary(ctx context.Context, query string) (*StoreSearchResultDTO, error)
 	CreateSearchResult(ctx context.Context, searchResult *SearchResult) error
@@ -54,7 +55,7 @@ func (s *storage) CreateSearchResult(ctx context.Context, searchResult *SearchRe
 	_, err := s.client.Pipelined(ctx, func(rdb cache.Pipeliner) error {
 
 		// dto contains slice of video.id in place  of video models
-		searchResultDTO := NewStoreSearchResultDTO(*searchResult)
+		searchResultDTO := NewStoreSearchResultDTO(searchResult)
 		cmd := rdb.HSet(ctx, "search_result:"+searchResultDTO.Query, "query", searchResultDTO.Query)
 
 		if cmd.Err() != nil {

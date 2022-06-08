@@ -7,7 +7,7 @@ import (
 )
 
 type NewServiceDTO struct {
-	SearchApi     ytsearch.Service
+	SearchApi     ytsearch.Client
 	Storage       Storage
 	VideoService  video.Service
 	YtVideoClient ytvideo.Client
@@ -18,7 +18,7 @@ type StoreSearchResultDTO struct {
 	Videos []string `json:"videos" yaml:"videos"`
 }
 
-func NewStoreSearchResultDTO(searchResult SearchResult) StoreSearchResultDTO {
+func NewStoreSearchResultDTO(searchResult *SearchResult) *StoreSearchResultDTO {
 	var videoIds []string
 
 	result := StoreSearchResultDTO{Query: searchResult.Query}
@@ -28,5 +28,5 @@ func NewStoreSearchResultDTO(searchResult SearchResult) StoreSearchResultDTO {
 	}
 
 	result.Videos = videoIds
-	return result
+	return &result
 }

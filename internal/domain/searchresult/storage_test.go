@@ -101,9 +101,9 @@ func TestCreateSearchResultError(t *testing.T) {
 		redisClient, _ := newTestRedis()
 		searchResultStorage := NewStorage(redisClient)
 
-		err := searchResultStorage.CreateSearchResult(ctx, &testSearchResult)
+		err := searchResultStorage.CreateSearchResult(ctx, testSearchResult)
 		assert.NoError(t, err)
-		err = searchResultStorage.CreateSearchResult(ctx, &testSearchResult)
+		err = searchResultStorage.CreateSearchResult(ctx, testSearchResult)
 		assert.Error(t, err)
 	})
 }

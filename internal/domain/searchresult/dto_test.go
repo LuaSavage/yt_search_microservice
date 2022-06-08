@@ -26,7 +26,7 @@ var (
 			Thumbnail:   "http://deepshit.b",
 		}}
 
-	testSearchResult SearchResult = SearchResult{
+	testSearchResult *SearchResult = &SearchResult{
 		Query:  "some question",
 		Videos: testVideos,
 	}
