@@ -8,9 +8,9 @@ import (
 
 	searchresult "github.com/LuaSavage/yt_search_microservice/internal/domain/searchresult"
 	video "github.com/LuaSavage/yt_search_microservice/internal/domain/video"
-	searchMocks "github.com/LuaSavage/yt_search_microservice/internal/mocks/searchmocks"
-	videoMocks "github.com/LuaSavage/yt_search_microservice/internal/mocks/videomocks"
-	apiMocks "github.com/LuaSavage/yt_search_microservice/pkg/mocks/ytsearchmocks"
+	searchMocks "github.com/LuaSavage/yt_search_microservice/internal/mocks/searchresult"
+	videoMocks "github.com/LuaSavage/yt_search_microservice/internal/mocks/video"
+	apiMocks "github.com/LuaSavage/yt_search_microservice/pkg/mocks/ytsearch"
 	ytVideoMocks "github.com/LuaSavage/yt_search_microservice/pkg/mocks/ytvideo"
 	"github.com/stretchr/testify/assert"
 	"github.com/stretchr/testify/mock"
@@ -18,13 +18,14 @@ import (
 	"gopkg.in/yaml.v3"
 )
 
-func setup(t testing.TB) (*searchMocks.Storage, *videoMocks.Service, *apiMocks.Service, searchresult.Service) {
+func setup(t testing.TB) (*searchMocks.Storage, *videoMocks.Service, *apiMocks.Client, searchresult.Service) {
 	storage := searchMocks.NewStorage(t)
 	videoService := videoMocks.NewService(t)
-	api := apiMocks.NewService(t)
+
+	api := apiMocks.NewClient(t)
 	videoStreamApi := ytVideoMocks.NewClient(t)
 
-	dto := searchresult.NewServiceDTO{
+	dto := &searchresult.NewServiceDTO{
 		SearchApi:     api,
 		Storage:       storage,
 		VideoService:  videoService,
