@@ -14,6 +14,8 @@ import (
 	yaml "gopkg.in/yaml.v3"
 )
 
+var expiration int = 100
+
 // newTestRedis returns a redis.Cmdable.
 func newTestRedis() (*redis.Client, *redismock.ClientMock) {
 	mr, err := miniredis.Run()
@@ -31,7 +33,7 @@ func newTestRedis() (*redis.Client, *redismock.ClientMock) {
 func TestGetErr(t *testing.T) {
 	t.Run("error due to empty search result object response", func(t *testing.T) {
 		redisClient, _ := newTestRedis()
-		streamStorage := NewStorage(redisClient)
+		streamStorage := NewStorage(redisClient, expiration)
 		_, err := streamStorage.Get(context.TODO(), "some id")
 		assert.Error(t, err)
 	})
@@ -42,7 +44,7 @@ func TestGetOK(t *testing.T) {
 	t.Run("error due to test search result dto doesnt received", func(t *testing.T) {
 
 		redisClient, redisMock := newTestRedis()
-		streamStorage := NewStorage(redisClient)
+		streamStorage := NewStorage(redisClient, expiration)
 
 		//loading test streampool
 		stream := VideoStreamPool{
@@ -71,7 +73,7 @@ func TestGetOK(t *testing.T) {
 func TestCreatetOK(t *testing.T) {
 	t.Run("error due to the video  dosn't properly created", func(t *testing.T) {
 		redisClient, _ := newTestRedis()
-		streamStorage := NewStorage(redisClient)
+		streamStorage := NewStorage(redisClient, expiration)
 
 		//loading test streampool
 		stream := VideoStreamPool{

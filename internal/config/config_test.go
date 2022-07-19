@@ -9,7 +9,7 @@ import (
 
 func TestGetConfig(t *testing.T) {
 	t.Run("error with cached search result", func(t *testing.T) {
-		cfg, err := GetConfig()
+		cfg, err := GetConfig("")
 		log.Printf("%+v\n", cfg)
 		assert.NoError(t, err)
 	})

@@ -36,13 +36,14 @@ var (
 		Views:       "228k",
 		Thumbnail:   "htttp://sdf.dickpic",
 	}
-	ctx context.Context = context.TODO()
+	ctx        context.Context = context.TODO()
+	expiration int             = 100
 )
 
 func TestGetVideoByIDError(t *testing.T) {
 	t.Run("error due to empty video object response", func(t *testing.T) {
 		redisClient, _ := newTestRedis()
-		videoStorage := NewStorage(redisClient)
+		videoStorage := NewStorage(redisClient, expiration)
 		retrivedVideo, err := videoStorage.GetVideoByID(ctx, testVideo.Id)
 		assert.Error(t, err, fmt.Sprintf("and retrived video looks like %+v\n", retrivedVideo))
 	})
@@ -51,7 +52,7 @@ func TestGetVideoByIDError(t *testing.T) {
 func TestGetVideoByIDOK(t *testing.T) {
 	t.Run("error due to test video doesnt received", func(t *testing.T) {
 		redisClient, redisMock := newTestRedis()
-		videoStorage := NewStorage(redisClient)
+		videoStorage := NewStorage(redisClient, expiration)
 
 		// writing test video into
 		var videoMaped map[string]string
@@ -71,7 +72,7 @@ func TestGetVideoByIDOK(t *testing.T) {
 func TestCreateVideoOK(t *testing.T) {
 	t.Run("error due to the video  dosn't properly created", func(t *testing.T) {
 		redisClient, _ := newTestRedis()
-		videoStorage := NewStorage(redisClient)
+		videoStorage := NewStorage(redisClient, expiration)
 
 		_, err := videoStorage.GetVideoByID(ctx, testVideo.Id)
 		assert.Error(t, err)
@@ -89,7 +90,7 @@ func TestCreateVideoOK(t *testing.T) {
 func TestCreateVideoError(t *testing.T) {
 	t.Run("error due to double storring video up issue", func(t *testing.T) {
 		redisClient, _ := newTestRedis()
-		videoStorage := NewStorage(redisClient)
+		videoStorage := NewStorage(redisClient, expiration)
 
 		err := videoStorage.CreateVideo(ctx, testVideo)
 		assert.NoError(t, err)

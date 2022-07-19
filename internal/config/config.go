@@ -8,16 +8,16 @@ import (
 
 type Config struct {
 	ObjectTTL struct {
-		Video           string `yaml:"video" env-default:"10"`
-		SearchResult    string `yaml:"search_result" env-default:"10"`
-		VideoStreamPool string `yaml:"video_stream_pool" env-default:"10"`
+		Video           int `yaml:"video" env-default:"10"`
+		SearchResult    int `yaml:"search_result" env-default:"10"`
+		VideoStreamPool int `yaml:"video_stream_pool" env-default:"10"`
 	} `yaml:"object_ttl"`
 	Redis struct {
 		Host     string `yaml:"host" env-required:"true"`
 		Port     string `yaml:"port" env-required:"true"`
 		Username string `yaml:"username" env-required:"true"`
 		Password string `yaml:"password" env-required:"true"`
-		Database string `yaml:"database" env-required:"true"`
+		Database int    `yaml:"database" env-required:"true"`
 	} `yaml:"redis" env-required:"true"`
 }
 
@@ -26,7 +26,7 @@ var (
 	once     sync.Once
 )
 
-func GetConfig() (*Config, error) {
+func GetConfig(path string) (*Config, error) {
 	var err error
 
 	once.Do(func() {
@@ -35,7 +35,12 @@ func GetConfig() (*Config, error) {
 			logger.Info("read application config")
 		*/
 		instance = &Config{}
-		err = cleanenv.ReadConfig("../../config.yml", instance)
+
+		if len(path) == 0 {
+			path = "../../config.yml"
+		}
+
+		err = cleanenv.ReadConfig(path, instance)
 
 		/*if err := cleanenv.ReadConfig("config.yml", instance); err != nil {
 			help, _ := cleanenv.GetDescription(instance, nil)

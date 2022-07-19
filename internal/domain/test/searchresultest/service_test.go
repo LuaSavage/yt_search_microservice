@@ -60,7 +60,7 @@ func TestGetSearchResultByQuaryOK(t *testing.T) {
 		// loading predefined videos data
 		videos := []video.Video{}
 
-		buf, err := ioutil.ReadFile("../../searchresult/searchresult_test_data/data.yaml")
+		buf, err := ioutil.ReadFile("../../searchresult/searchresult_testdata/data.yaml")
 		require.NoError(t, err)
 
 		err = yaml.Unmarshal([]byte(buf), &videos)

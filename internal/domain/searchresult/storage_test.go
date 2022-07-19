@@ -35,13 +35,14 @@ var (
 		Videos: []string{"=aBcDeFg1", "=aBcDeFg99", "=aBcDeFg92"},
 	}
 
-	ctx context.Context = context.TODO()
+	ctx        context.Context = context.TODO()
+	expiration int             = 100
 )
 
 func TestGetSearchResultByQuaryError(t *testing.T) {
 	t.Run("error due to empty search result object response", func(t *testing.T) {
 		redisClient, _ := newTestRedis()
-		searchResultStorage := NewStorage(redisClient)
+		searchResultStorage := NewStorage(redisClient, expiration)
 
 		result, err := searchResultStorage.GetSearchResultByQuary(ctx, testSearchResultDTO.Query)
 		assert.Error(t, err, fmt.Sprintf("retrived search result looks like %+v\n", result))
@@ -52,7 +53,7 @@ func TestGetSearchResultByQuaryError(t *testing.T) {
 func TestGetSearchResultByQuaryOK(t *testing.T) {
 	t.Run("error due to test search result dto doesnt received", func(t *testing.T) {
 		redisClient, redisMock := newTestRedis()
-		searchResultStorage := NewStorage(redisClient)
+		searchResultStorage := NewStorage(redisClient, expiration)
 
 		redisMock.HSet(ctx, "search_result:"+testSearchResultDTO.Query, "query", testSearchResultDTO.Query)
 		data, _ := json.Marshal(testSearchResultDTO.Videos)
@@ -79,7 +80,7 @@ func SearchResultDtoToCrippledOrigin(dto StoreSearchResultDTO) SearchResult {
 func TestCreateSearchResultOK(t *testing.T) {
 	t.Run("error due to the video  dosn't properly created", func(t *testing.T) {
 		redisClient, _ := newTestRedis()
-		searchResultStorage := NewStorage(redisClient)
+		searchResultStorage := NewStorage(redisClient, expiration)
 
 		_, err := searchResultStorage.GetSearchResultByQuary(ctx, testSearchResultDTO.Query)
 		assert.Error(t, err)
@@ -99,7 +100,7 @@ func TestCreateSearchResultOK(t *testing.T) {
 func TestCreateSearchResultError(t *testing.T) {
 	t.Run("error due to double storring video up issue", func(t *testing.T) {
 		redisClient, _ := newTestRedis()
-		searchResultStorage := NewStorage(redisClient)
+		searchResultStorage := NewStorage(redisClient, expiration)
 
 		err := searchResultStorage.CreateSearchResult(ctx, testSearchResult)
 		assert.NoError(t, err)

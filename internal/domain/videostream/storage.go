@@ -4,6 +4,7 @@ import (
 	"context"
 	"encoding/json"
 	"fmt"
+	"time"
 
 	cache "github.com/LuaSavage/yt_search_microservice/pkg/client/cache"
 )
@@ -14,11 +15,23 @@ type Storage interface {
 }
 
 type storage struct {
-	client cache.Client
+	client     cache.Client
+	expiration int
 }
 
-func NewStorage(client cache.Client) Storage {
-	return &storage{client: client}
+func NewStorage(client cache.Client, expiration int) Storage {
+	return &storage{
+		client:     client,
+		expiration: expiration,
+	}
+}
+
+func (s *storage) expire(ctx context.Context, key string) error {
+	if cmd := s.client.Expire(ctx, key, time.Second*time.Duration(s.expiration)); cmd.Err() != nil {
+		return cmd.Err()
+	}
+
+	return nil
 }
 
 func (s *storage) Get(ctx context.Context, videoId string) (*VideoStreamPool, error) {
@@ -36,6 +49,11 @@ func (s *storage) Get(ctx context.Context, videoId string) (*VideoStreamPool, er
 
 	if streamPool.VideoId != stringMap.Val()["videoId"] {
 		return nil, fmt.Errorf("video stream pool by id '%s' does'nt exists", videoId)
+	}
+
+	// updating expiration of video
+	if err := s.expire(ctx, "video_stream_pool:"+videoId); err != nil {
+		return nil, err
 	}
 
 	// extracting video streams
@@ -69,6 +87,11 @@ func (s *storage) Create(ctx context.Context, streamPool *VideoStreamPool) error
 
 		return nil
 	})
+
+	// updating expiration of video
+	if err := s.expire(ctx, "video_stream_pool:"+streamPool.VideoId); err != nil {
+		return err
+	}
 
 	return err
 }

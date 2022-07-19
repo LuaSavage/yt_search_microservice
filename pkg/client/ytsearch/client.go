@@ -11,7 +11,7 @@ type Client interface {
 
 type client struct{}
 
-func NewService() Client {
+func NewClient() Client {
 	return &client{}
 }
 

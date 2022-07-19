@@ -4,6 +4,7 @@ import (
 	"context"
 	"encoding/json"
 	"fmt"
+	"time"
 
 	cache "github.com/LuaSavage/yt_search_microservice/pkg/client/cache"
 )
@@ -15,11 +16,23 @@ type Storage interface {
 }
 
 type storage struct {
-	client cache.Client
+	client     cache.Client
+	expiration int
 }
 
-func NewStorage(client cache.Client) Storage {
-	return &storage{client: client}
+func NewStorage(client cache.Client, expiration int) Storage {
+	return &storage{
+		client:     client,
+		expiration: expiration,
+	}
+}
+
+func (s *storage) expire(ctx context.Context, key string) error {
+	if cmd := s.client.Expire(ctx, key, time.Second*time.Duration(s.expiration)); cmd.Err() != nil {
+		return cmd.Err()
+	}
+
+	return nil
 }
 
 func (s *storage) GetSearchResultByQuary(ctx context.Context, query string) (*StoreSearchResultDTO, error) {
@@ -39,6 +52,11 @@ func (s *storage) GetSearchResultByQuary(ctx context.Context, query string) (*St
 
 	if searchResultDTO.Query != query {
 		return nil, fmt.Errorf("search results by query '%s' does'nt exists", query)
+	}
+
+	// updating expiration of video
+	if err := s.expire(ctx, "search_result:"+query); err != nil {
+		return nil, err
 	}
 
 	return searchResultDTO, nil
@@ -71,6 +89,11 @@ func (s *storage) CreateSearchResult(ctx context.Context, searchResult *SearchRe
 
 		return nil
 	})
+
+	// updating expiration of video
+	if err := s.expire(ctx, "search_result:"+searchResult.Query); err != nil {
+		return err
+	}
 
 	return err
 }

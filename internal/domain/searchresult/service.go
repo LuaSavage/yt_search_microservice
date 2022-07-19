@@ -78,6 +78,7 @@ func (s *service) Search(ctx context.Context, query string) (*SearchResult, erro
 	results, err := s.GetSearchResultByQuary(ctx, query)
 
 	if err == nil {
+		log.Printf("%s '%s' %s", "search result", query, "found in cache")
 		return results, nil
 	}
 

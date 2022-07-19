@@ -1,4 +1,4 @@
-package searchresult
+package videostream
 
 import (
 	"encoding/json"
@@ -9,12 +9,12 @@ import (
 )
 
 const (
-	searchURL = "/search"
+	searchURL = "/video"
 )
 
 type Handler interface {
 	Register(router *httprouter.Router)
-	Search(responseWriter http.ResponseWriter, request *http.Request, params httprouter.Params)
+	GetVideoStreamPool(responseWriter http.ResponseWriter, request *http.Request, params httprouter.Params)
 }
 
 type handler struct {
@@ -29,20 +29,21 @@ func NewHandler(service Service) Handler {
 
 func (h *handler) Register(router *httprouter.Router) {
 	log.Println("Register handler " + searchURL)
-	router.GET(searchURL, h.Search)
+	router.GET(searchURL, h.GetVideoStreamPool)
 }
 
-func (h *handler) Search(responseWriter http.ResponseWriter, request *http.Request, params httprouter.Params) {
+func (h *handler) GetVideoStreamPool(responseWriter http.ResponseWriter, request *http.Request, params httprouter.Params) {
 
-	query := request.URL.Query().Get("query")
+	id := request.URL.Query().Get("id")
 
-	if len(query) > 0 {
+	if len(id) > 0 {
 		responseWriter.Header().Set("Content-Type", "application/json")
-		searchResult, err := h.service.Search(request.Context(), query)
+
+		videoStreamPool, err := h.service.Get(request.Context(), id)
 
 		if err == nil {
 			responseWriter.WriteHeader(http.StatusOK)
-			marshaled, _ := json.Marshal(searchResult)
+			marshaled, _ := json.Marshal(videoStreamPool)
 			responseWriter.Write([]byte(marshaled))
 		} else {
 			responseWriter.WriteHeader(http.StatusNotFound)
