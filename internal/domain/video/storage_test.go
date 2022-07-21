@@ -65,7 +65,7 @@ func TestGetVideoByIDOK(t *testing.T) {
 		}
 
 		retrivenVideo, err := videoStorage.GetVideoByID(ctx, testVideo.Id)
-		assert.Equal(t, testVideo, *retrivenVideo, err)
+		assert.Equal(t, testVideo, retrivenVideo, err)
 	})
 }
 
@@ -82,7 +82,7 @@ func TestCreateVideoOK(t *testing.T) {
 
 		// If it succesfully written then it has to be same as origin
 		retrivenVideo, err := videoStorage.GetVideoByID(ctx, testVideo.Id)
-		assert.Equal(t, testVideo, *retrivenVideo, err)
+		assert.Equal(t, testVideo, retrivenVideo, err)
 	})
 }
 

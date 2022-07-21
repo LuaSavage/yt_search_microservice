@@ -1,21 +1,17 @@
-package searchresulttest
+package searchresult_test
 
 import (
 	"context"
 	"fmt"
-	"io/ioutil"
 	"testing"
 
 	searchresult "github.com/LuaSavage/yt_search_microservice/internal/domain/searchresult"
-	video "github.com/LuaSavage/yt_search_microservice/internal/domain/video"
 	searchMocks "github.com/LuaSavage/yt_search_microservice/internal/mocks/searchresult"
 	videoMocks "github.com/LuaSavage/yt_search_microservice/internal/mocks/video"
 	apiMocks "github.com/LuaSavage/yt_search_microservice/pkg/mocks/ytsearch"
 	ytVideoMocks "github.com/LuaSavage/yt_search_microservice/pkg/mocks/ytvideo"
 	"github.com/stretchr/testify/assert"
 	"github.com/stretchr/testify/mock"
-	"github.com/stretchr/testify/require"
-	"gopkg.in/yaml.v3"
 )
 
 func setup(t testing.TB) (*searchMocks.Storage, *videoMocks.Service, *apiMocks.Client, searchresult.Service) {
@@ -56,43 +52,43 @@ func TestGetSearchResultByQuaryOK(t *testing.T) {
 	t.Run("error with cached search result", func(t *testing.T) {
 		//storage, videoService, api, service := setup(t)
 		storage, videoService, _, service := setup(t)
+		/*
+			// loading predefined videos data
+			videos := []video.Video{}
 
-		// loading predefined videos data
-		videos := []video.Video{}
+			buf, err := ioutil.ReadFile("../../searchresult/searchresult_testdata/data.yaml")
+			require.NoError(t, err)
 
-		buf, err := ioutil.ReadFile("../../searchresult/searchresult_testdata/data.yaml")
-		require.NoError(t, err)
+			err = yaml.Unmarshal([]byte(buf), &videos)
+			require.NoError(t, err)
 
-		err = yaml.Unmarshal([]byte(buf), &videos)
-		require.NoError(t, err)
+			// predefined search result dto
+			videoIDs := []string{}
 
-		// predefined search result dto
-		videoIDs := []string{}
-
-		for _, value := range videos {
-			videoIDs = append(videoIDs, value.Id)
-		}
-
-		testSearchResultDTO := searchresult.StoreSearchResultDTO{
+			for _, value := range videos {
+				videoIDs = append(videoIDs, value.Id)
+			}
+		*/
+		/*testSearchResultDTO := searchresult.StoreSearchResultDTO{
 			Query:  "test quary",
 			Videos: videoIDs,
-		}
+		}*/
 
 		ctx := context.TODO()
 
-		for i := 0; i < len(videos); i++ {
-			videoService.On("GetVideoByID", mock.AnythingOfType("*context.emptyCtx"), videos[i].Id).
-				Return(&videos[i], nil).Once()
+		for i := 0; i < len(testVideos); i++ {
+			videoService.On("GetVideoByID", mock.AnythingOfType("*context.emptyCtx"), testVideos[i].Id).
+				Return(&testVideos[i], nil).Once()
 		}
 
 		storage.On("GetSearchResultByQuary", mock.AnythingOfType("*context.emptyCtx"), mock.AnythingOfType("string")).
 			Return(&testSearchResultDTO, nil).Once()
 
 		//predefine search result
-		testSearchResult := searchresult.SearchResult{
+		/*testSearchResult := searchresult.SearchResult{
 			Query:  testSearchResultDTO.Query,
 			Videos: videos,
-		}
+		}*/
 
 		retrivedSearchResult, err := service.GetSearchResultByQuary(ctx, testSearchResult.Query)
 		assert.NoError(t, err, "GetSearchResultByQuary ought to unmistakably works")

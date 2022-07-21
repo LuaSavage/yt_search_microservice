@@ -30,11 +30,6 @@ func newTestRedis() (*redis.Client, *redismock.ClientMock) {
 // initialise test object
 
 var (
-	testSearchResultDTO StoreSearchResultDTO = StoreSearchResultDTO{
-		Query:  "some question",
-		Videos: []string{"=aBcDeFg1", "=aBcDeFg99", "=aBcDeFg92"},
-	}
-
 	ctx        context.Context = context.TODO()
 	expiration int             = 100
 )
@@ -101,10 +96,9 @@ func TestCreateSearchResultError(t *testing.T) {
 	t.Run("error due to double storring video up issue", func(t *testing.T) {
 		redisClient, _ := newTestRedis()
 		searchResultStorage := NewStorage(redisClient, expiration)
-
-		err := searchResultStorage.CreateSearchResult(ctx, testSearchResult)
+		err := searchResultStorage.CreateSearchResult(ctx, &testSearchResult)
 		assert.NoError(t, err)
-		err = searchResultStorage.CreateSearchResult(ctx, testSearchResult)
+		err = searchResultStorage.CreateSearchResult(ctx, &testSearchResult)
 		assert.Error(t, err)
 	})
 }
